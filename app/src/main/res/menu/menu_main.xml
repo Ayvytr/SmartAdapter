@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/mid_add_diff"
+        android:title="Add diff"/>
+    <item
+        android:id="@+id/mid_remove_diff"
+        android:title="Remove diff"/>
+    <item
+        android:id="@+id/mid_grid"
+        android:title="Grid Layout Manager"/>
+    <item
+        android:id="@+id/mid_linear"
+        android:title="Linear Layout Manager"/>
+    <item
+        android:id="@+id/mid_java_activiity"
+        android:title="Java Activity"/>
+</menu>
