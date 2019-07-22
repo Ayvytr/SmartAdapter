@@ -31,29 +31,12 @@ class MainActivity : AppCompatActivity() {
     private fun initView() {
         baseAdapter = recycler_view.bind(list, R.layout.item, 1) { item: Item ->
             item_text.text = item.value
-            //            container.setOnClickListener {
-            //                toast(item.value)
-            //            }
         }
-
-            //        recycler_view.bind(list, R.layout.item) {
-            //            item_text.text = it.value
-            //            container.setOnClickListener {
-            //
-            //            }
-            //        }
-
             .map(R.layout.item_second, 2) { item: Item ->
                 item_second_text.text = item.value
-                //                container_second.setOnClickListener {
-                //                    toast(item.value)
-                //                }
             }
             .map(R.layout.item_custom, 3) { item: Item ->
                 item_custom_text.text = item.value
-                //                container_custom.setOnClickListener {
-                //                    toast(item.value)
-                //                }
             }
             .map(BindMap4())
             //            .diff({ oldItem, newItem -> oldItem.type == newItem.type },
@@ -176,9 +159,9 @@ class MainActivity : AppCompatActivity() {
 }
 
 class Diff : SmartDiffCallback<Item>({ oldItem, newItem -> oldItem === newItem },
-                                              { oldItem, newItem -> oldItem === newItem && oldItem.value == newItem.value },
-                                              { item: Item, item1: Item -> },
-                                              { param: Any, item: Item, mutableList: MutableList<Any> -> }
+                                     { oldItem, newItem -> oldItem === newItem && oldItem.value == newItem.value },
+                                     { item: Item, item1: Item -> },
+                                     { param: Any, item: Item, mutableList: MutableList<Any> -> }
 )
 
 class BindMap4 : SmartContainer<Item>(R.layout.item_4, 4, { item_text_4.text = it.value }) {

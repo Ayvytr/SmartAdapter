@@ -16,12 +16,13 @@ import androidx.recyclerview.widget.RecyclerView
 
 /**
  * Quick entrance for [SmartAdapter].
+ *
  * Usage:
- * <pre>
+ * ```
  *     rv = YourRecyclerView()
  *     rv.bind(list, R.layout.your_layout)
  *       .build()
- * </pre>
+ * ```
  */
 fun <T> RecyclerView.bind(items: List<T>,
                           @LayoutRes layoutId: Int,
