@@ -1,4 +1,4 @@
-# SmartAdapter  [![](https://img.shields.io/badge/jCenter-0.1.0-red.svg)](https://bintray.com/ayvytr/maven/smart-adapter/_latestVersion)
+# SmartAdapter  [![](https://img.shields.io/badge/jCenter-0.2.0-red.svg)](https://bintray.com/ayvytr/maven/smart-adapter/_latestVersion)
 Kotlin Android Adapter of RecyclerView, don't need create adapter.
 
 | 有DiffCallback，item增减有动画 | 没有DiffCallback，item增减没有动画 |
@@ -25,10 +25,10 @@ Androidx:
 
 
 
-## Usage: 
+## 用法:
 
 ```kotlin
-//single item view
+//单个item
 recycler_view.bind(list, R.layout.item, 1) { item: Item ->    
 	item_text.text = item.value    
 }}.build()
@@ -39,7 +39,7 @@ recycler_view.bind(list, R.layout.item, 1) { item: Item ->
 
 
 ```kotlin
-//multiple item view:
+//多种item
 recycler_view.bind(list, R.layout.item, 1) { item: Item ->
             item_text.text = item.value
         }

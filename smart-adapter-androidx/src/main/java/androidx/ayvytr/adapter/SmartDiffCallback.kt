@@ -2,7 +2,7 @@ package androidx.ayvytr.adapter
 
 /**
  * 为外部提供的略简便的Diff Callback，从0.1.0较为繁琐的函数变量改为直接提供方法.
- * @author ayvytr
+ * @author Ayvytr
  * @since 0.2.0
  */
 open class SmartDiffCallback<T> {
