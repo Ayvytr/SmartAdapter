@@ -15,14 +15,38 @@ import androidx.recyclerview.widget.RecyclerView
  */
 
 /**
- * Quick entrance for [SmartAdapter].
+ * 快速创建[SmartAdapter]的入口.
  *
- * Usage:
+ * 用法:
  * ```
  *     rv = YourRecyclerView()
- *     rv.bind(list, R.layout.your_layout)
+ *     rv.bind(list, R.layout.your_layout){
+ *          //view binding
+ *     }
  *       .build()
  * ```
+ *
+ */
+fun <T> RecyclerView.bind(items: List<T>,
+                          @LayoutRes layoutId: Int,
+                          bind: (View.(item: T) -> Unit)): SmartAdapter<T> {
+    this.layoutManager = LinearLayoutManager(context)
+    return SmartAdapter(items.toMutableList(), this)
+        .map(layoutId, 0, bind)
+}
+
+/**
+ * 快速创建[SmartAdapter]的入口.
+ *
+ * 用法:
+ * ```
+ *     rv = YourRecyclerView()
+ *     rv.bind(list, itemViewType, R.layout.your_layout){
+ *          //view binding
+ *     }
+ *       .build()
+ * ```
+ *
  */
 fun <T> RecyclerView.bind(items: List<T>,
                           @LayoutRes layoutId: Int,
@@ -34,8 +58,7 @@ fun <T> RecyclerView.bind(items: List<T>,
 }
 
 /**
- * Real adapter class, return type of [bind]. You can inherit [SmartAdapter], but in most situations, call [bind] is
- * enough.
+ * 真实Adapter类，是[bind]的返回类型，你可以继承[SmartAdapter], 但是大多数情况下，调用[bind]足够了.
  */
 open class SmartAdapter<T>(val list: MutableList<T>, val rv: RecyclerView)
     : RecyclerView.Adapter<SmartViewHolder<T>>() {
@@ -46,21 +69,22 @@ open class SmartAdapter<T>(val list: MutableList<T>, val rv: RecyclerView)
     private val map = mutableMapOf<Int, SmartContainer<T>>()
 
     /**
-     * Temp list for to calculate different for [diffCallback]
+     * [diffCallback] 使用的临时List，充当oldList.
      */
     private var tempList: MutableList<T> = arrayListOf()
 
     /**
-     * Outer different callback class.
+     * 为外部提供的较为简便的Diff Callback类.
      * @see [SmartDiffCallback]
      */
     private var smartDiffCallback: SmartDiffCallback<T> = SmartDiffCallback()
 
     /**
-     * Inner real different callback.
+     * 内部真实创建的Diff Callback.
      */
     var diffCallback: DiffUtil.Callback? = null
         private set
+    var detectMovies = true
 
     private var onItemClickListener: (T, Int) -> Unit = { _, _ -> }
     private var onItemLongClickListener: (T, Int) -> Unit = { _, _ -> }
@@ -131,22 +155,12 @@ open class SmartAdapter<T>(val list: MutableList<T>, val rv: RecyclerView)
     }
 
 
-    fun diff(areItemsTheSame: (oldItem: T, newItem: T) -> Boolean,
-             areContentsSame: (oldItem: T, newItem: T) -> Boolean,
-             changePayload: (oldItem: T, newItem: T) -> Any? = { _: T, _: T -> null },
-             onBindPayloads: (holder: SmartViewHolder<T>, item: T, payloads: MutableList<Any>) -> Unit = { _, _, _ -> null },
-             detectMovies: Boolean = true
-    ): SmartAdapter<T> {
-        return diff(SmartDiffCallback(areItemsTheSame, areContentsSame, changePayload, onBindPayloads, detectMovies))
-    }
-
-
     /**
      * Create different callback.
      */
-    fun diff(smartDiffCallback: SmartDiffCallback<T>): SmartAdapter<T> {
-        this.smartDiffCallback = smartDiffCallback
-        createDiffCallback()
+    fun diff(smartDiffCallback: SmartDiffCallback<T>, detectMovies: Boolean = true): SmartAdapter<T> {
+        this.detectMovies = detectMovies
+        createDiffCallback(smartDiffCallback)
         return this
     }
 
@@ -162,26 +176,26 @@ open class SmartAdapter<T>(val list: MutableList<T>, val rv: RecyclerView)
     /**
      * Real different creator.
      */
-    private fun createDiffCallback() {
+    private fun createDiffCallback(smartDiffCallback: SmartDiffCallback<T>) {
         this.diffCallback = object : DiffUtil.Callback() {
             override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                return smartDiffCallback.areItemsSame(list[oldItemPosition], tempList[newItemPosition])
+                return smartDiffCallback.areItemsTheSame(tempList[oldItemPosition], list[newItemPosition])
             }
 
             override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                return smartDiffCallback.areContentsSame(list[oldItemPosition], tempList[newItemPosition])
+                return smartDiffCallback.areContentsTheSame(tempList[oldItemPosition], list[newItemPosition])
             }
 
             override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? {
-                return smartDiffCallback.changePayload(list[oldItemPosition], tempList[newItemPosition])
+                return smartDiffCallback.getChangePayload(tempList[oldItemPosition], list[newItemPosition])
             }
 
             override fun getOldListSize(): Int {
-                return list.size
+                return tempList.size
             }
 
             override fun getNewListSize(): Int {
-                return tempList.size
+                return list.size
             }
         }
     }
@@ -206,7 +220,7 @@ open class SmartAdapter<T>(val list: MutableList<T>, val rv: RecyclerView)
      * Calculate difference.
      */
     private fun diffUpdate() {
-        val diffResult = DiffUtil.calculateDiff(diffCallback!!, smartDiffCallback.detectMovies)
+        val diffResult = DiffUtil.calculateDiff(diffCallback!!, detectMovies)
         diffResult.dispatchUpdatesTo(this)
         list.clear()
         list.addAll(tempList)
@@ -368,17 +382,6 @@ open class SmartContainer<T>(@LayoutRes val layoutId: Int, val viewType: Int, va
     }
 }
 
-/**
- * Outer DiffCallback for [SmartAdapter], default [areItemsSame] and [areContentsSame] is oldItem === newItem, you'd
- * better overwrite it.
- */
-open class SmartDiffCallback<T>(
-    var areItemsSame: (oldItem: T, newItem: T) -> Boolean = { oldItem: T, newItem: T -> oldItem === newItem },
-    var areContentsSame: (oldItem: T, newItem: T) -> Boolean = { oldItem: T, newItem: T -> oldItem === newItem },
-    var changePayload: (oldItem: T, newItem: T) -> Any? = { _: T, _: T -> null },
-    var onBindPayloads: (holder: SmartViewHolder<T>, item: T, payloads: MutableList<Any>) -> Unit = { _, _, _ -> null },
-    var detectMovies: Boolean = true) {
-}
 
 /**
  * View holder for [SmartAdapter]
