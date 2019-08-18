@@ -1,1 +1,1 @@
-include ':app', ':smart-adapter-androidx', ':smart-adapter', ':demo'
+include ':smart-adapter', ':demo'
