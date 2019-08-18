@@ -24,6 +24,9 @@ android {
 
 }
 
+//def jcenter = true
+def jcenter = false
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
@@ -34,5 +37,9 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
-    implementation 'com.ayvytr:smart-adapter:0.1.0'
+    if(jcenter) {
+        implementation 'com.ayvytr:smart-adapter:0.1.0'
+    } else {
+        implementation project(":smart-adapter")
+    }
 }

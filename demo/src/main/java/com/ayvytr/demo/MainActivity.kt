@@ -158,10 +158,7 @@ class MainActivity : AppCompatActivity() {
 
 }
 
-class Diff : SmartDiffCallback<Item>({ oldItem, newItem -> oldItem === newItem },
-                                     { oldItem, newItem -> oldItem === newItem && oldItem.value == newItem.value },
-                                     { item: Item, item1: Item -> },
-                                     { param: Any, item: Item, mutableList: MutableList<Any> -> }
+class Diff : SmartDiffCallback<Item>(
 )
 
 class BindMap4 : SmartContainer<Item>(R.layout.item_4, 4, { item_text_4.text = it.value }) {
