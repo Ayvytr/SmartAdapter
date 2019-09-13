@@ -71,7 +71,7 @@ open class SmartAdapter<T>(val list: MutableList<T>, val rv: RecyclerView)
     /**
      * [diffCallback] 使用的临时List，充当oldList.
      */
-    private var tempList: MutableList<T> = arrayListOf()
+    private var tempNewList: MutableList<T> = arrayListOf()
 
     /**
      * 为外部提供的较为简便的Diff Callback类.
@@ -179,23 +179,23 @@ open class SmartAdapter<T>(val list: MutableList<T>, val rv: RecyclerView)
     private fun createDiffCallback(smartDiffCallback: SmartDiffCallback<T>) {
         this.diffCallback = object : DiffUtil.Callback() {
             override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                return smartDiffCallback.areItemsTheSame(tempList[oldItemPosition], list[newItemPosition])
+                return smartDiffCallback.areItemsTheSame(list[oldItemPosition], tempNewList[newItemPosition])
             }
 
             override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                return smartDiffCallback.areContentsTheSame(tempList[oldItemPosition], list[newItemPosition])
+                return smartDiffCallback.areContentsTheSame(list[oldItemPosition], tempNewList[newItemPosition])
             }
 
             override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? {
-                return smartDiffCallback.getChangePayload(tempList[oldItemPosition], list[newItemPosition])
+                return smartDiffCallback.getChangePayload(list[oldItemPosition], tempNewList[newItemPosition])
             }
 
             override fun getOldListSize(): Int {
-                return tempList.size
+                return list.size
             }
 
             override fun getNewListSize(): Int {
-                return list.size
+                return tempNewList.size
             }
         }
     }
@@ -209,10 +209,10 @@ open class SmartAdapter<T>(val list: MutableList<T>, val rv: RecyclerView)
     }
 
     private fun getTempList(): MutableList<T> {
-        tempList = mutableListOf<T>().apply {
+        tempNewList = mutableListOf<T>().apply {
             list.forEach { add(it) }
         }
-        return tempList
+        return tempNewList
     }
 
 
@@ -223,7 +223,7 @@ open class SmartAdapter<T>(val list: MutableList<T>, val rv: RecyclerView)
         val diffResult = DiffUtil.calculateDiff(diffCallback!!, detectMovies)
         diffResult.dispatchUpdatesTo(this)
         list.clear()
-        list.addAll(tempList)
+        list.addAll(tempNewList)
     }
 
     /**
@@ -247,7 +247,7 @@ open class SmartAdapter<T>(val list: MutableList<T>, val rv: RecyclerView)
      */
     fun update(newList: List<T>) {
         if (diffCallback != null) {
-            tempList = newList.toMutableList()
+            tempNewList = newList.toMutableList()
             diffUpdate()
         } else {
             list.clear()
@@ -337,7 +337,7 @@ open class SmartAdapter<T>(val list: MutableList<T>, val rv: RecyclerView)
 
         if (diffCallback != null) {
             mutableListOf<T>().also {
-                tempList.clear()
+                tempNewList.clear()
                 diffUpdate()
             }
         } else {
