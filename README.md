@@ -1,4 +1,4 @@
-# SmartAdapter  [![](https://img.shields.io/badge/jCenter-0.2.0-red.svg)](https://bintray.com/ayvytr/maven/smart-adapter/_latestVersion)
+# SmartAdapter  [![](https://img.shields.io/badge/jCenter-0.2.1-red.svg)](https://bintray.com/ayvytr/maven/smart-adapter/_latestVersion)
 Kotlin Android Adapter of RecyclerView, don't need create adapter.
 
 | 有DiffCallback，item增减有动画 | 没有DiffCallback，item增减没有动画 |
