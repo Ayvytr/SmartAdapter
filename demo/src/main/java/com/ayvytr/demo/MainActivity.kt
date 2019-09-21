@@ -47,7 +47,8 @@ class MainActivity : AppCompatActivity() {
             //                      } else null
             //                  },
             //                  { holder, item, payloads -> holder.bind(item) })
-            .diff(Diff())
+//            .diff(Diff())
+            .diff()
             .type { it.type }
             .click { item: Item, i: Int ->
                 toast("clicked $i $item")

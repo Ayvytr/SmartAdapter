@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 
 /**
- * @author Ayvytr
+ * @author Ayvytr <a href="https://github.com/Ayvytr" target="_blank">'s GitHub</a>
  * @since 0.1.0
  */
 
@@ -158,7 +158,8 @@ open class SmartAdapter<T>(val list: MutableList<T>, val rv: RecyclerView)
     /**
      * Create different callback.
      */
-    fun diff(smartDiffCallback: SmartDiffCallback<T>, detectMovies: Boolean = true): SmartAdapter<T> {
+    fun diff(smartDiffCallback: SmartDiffCallback<T> = SmartDiffCallback(),
+             detectMovies: Boolean = true): SmartAdapter<T> {
         this.detectMovies = detectMovies
         createDiffCallback(smartDiffCallback)
         return this
