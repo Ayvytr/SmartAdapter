@@ -1,5 +1,6 @@
 package androidx.ayvytr.adapter
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,7 +32,7 @@ fun <T> RecyclerView.bind(items: List<T>,
                           @LayoutRes layoutId: Int,
                           bind: (View.(item: T) -> Unit)): SmartAdapter<T> {
     this.layoutManager = LinearLayoutManager(context)
-    return SmartAdapter(items.toMutableList(), this)
+    return SmartAdapter(context, items.toMutableList())
         .map(layoutId, 0, bind)
 }
 
@@ -53,20 +54,22 @@ fun <T> RecyclerView.bind(items: List<T>,
                           type: Int = 0,
                           bind: (View.(item: T) -> Unit)): SmartAdapter<T> {
     this.layoutManager = LinearLayoutManager(context)
-    return SmartAdapter(items.toMutableList(), this)
+    return SmartAdapter(context, items.toMutableList())
         .map(layoutId, type, bind)
 }
 
 /**
  * 真实Adapter类，是[bind]的返回类型，你可以继承[SmartAdapter], 但是大多数情况下，调用[bind]足够了.
  */
-open class SmartAdapter<T>(val list: MutableList<T>, val rv: RecyclerView)
+open class SmartAdapter<T>(val context: Context, val list: MutableList<T> = mutableListOf(),
+                           bind: SmartContainer<T>? = null)
     : RecyclerView.Adapter<SmartViewHolder<T>>() {
     /**
      * @see [type]
      */
-    private var viewTypePredicate: (item: T) -> Int = { 0 }
-    private val map = mutableMapOf<Int, SmartContainer<T>>()
+    private var viewTypePredicate: (item: T, position: Int) -> Int = { _, _ -> 0 }
+
+    val map = mutableMapOf<Int, SmartContainer<T>>()
 
     /**
      * [diffCallback] 使用的临时List，充当oldList.
@@ -83,17 +86,18 @@ open class SmartAdapter<T>(val list: MutableList<T>, val rv: RecyclerView)
      * 内部真实创建的Diff Callback.
      */
     var diffCallback: DiffUtil.Callback? = null
-        private set
+
     var detectMovies = true
 
     private var onItemClickListener: (T, Int) -> Unit = { _, _ -> }
     private var onItemLongClickListener: (T, Int) -> Unit = { _, _ -> }
 
+//    var type:(item: T) -> Int = {0}
     /**
      * Function to get view type.
      * @see [viewTypePredicate]
      */
-    fun type(predicate: (item: T) -> Int): SmartAdapter<T> {
+    fun type(predicate: (item: T, position: Int) -> Int): SmartAdapter<T> {
         this.viewTypePredicate = predicate
         return this
     }
@@ -101,8 +105,10 @@ open class SmartAdapter<T>(val list: MutableList<T>, val rv: RecyclerView)
     /**
      * Real function to create [SmartAdapter], you must to call it last step.
      */
+    //TODO:删除
+    @Deprecated(message = "删除")
     fun build(): SmartAdapter<T> {
-        rv.adapter = this
+//        rv.adapter = this
         return this
     }
 
@@ -129,7 +135,7 @@ open class SmartAdapter<T>(val list: MutableList<T>, val rv: RecyclerView)
     override fun getItemCount() = list.size
 
     override fun getItemViewType(position: Int): Int {
-        return viewTypePredicate(list[position])
+        return viewTypePredicate(list[position], position)
     }
 
 
@@ -146,13 +152,13 @@ open class SmartAdapter<T>(val list: MutableList<T>, val rv: RecyclerView)
         return this
     }
 
-    /**
-     * Sets up a layout manager for the recycler view.
-     */
-    fun layoutManager(manager: RecyclerView.LayoutManager): SmartAdapter<T> {
-        rv.layoutManager = manager
-        return this
-    }
+//    /**
+//     * Sets up a layout manager for the recycler view.
+//     */
+//    fun layoutManager(manager: RecyclerView.LayoutManager): SmartAdapter<T> {
+//        rv.layoutManager = manager
+//        return this
+//    }
 
 
     /**
@@ -165,14 +171,14 @@ open class SmartAdapter<T>(val list: MutableList<T>, val rv: RecyclerView)
         return this
     }
 
-    /**
-     * Different remover.
-     */
-    fun removeDiff() {
-        if (hasDiff()) {
-            diffCallback = null
-        }
-    }
+//    /**
+//     * Different remover.
+//     */
+//    fun removeDiff() {
+//        if (hasDiff()) {
+//            diffCallback = null
+//        }
+//    }
 
     /**
      * Real different creator.

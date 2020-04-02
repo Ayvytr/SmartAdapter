@@ -10,9 +10,9 @@ import androidx.ayvytr.adapter.SmartDiffCallback
 import androidx.ayvytr.adapter.bind
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.item.*
-import kotlinx.android.synthetic.main.item_4.view.*
 import kotlinx.android.synthetic.main.item_custom.*
 import kotlinx.android.synthetic.main.item_second.*
+import kotlinx.android.synthetic.main.item_type2.view.*
 import kotlin.random.Random
 
 class MainActivity : AppCompatActivity() {
@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
             //                  { holder, item, payloads -> holder.bind(item) })
 //            .diff(Diff())
             .diff()
-            .type { it.type }
+            .type { it, _ -> it.type }
             .click { item: Item, i: Int ->
                 toast("clicked $i $item")
             }
@@ -162,7 +162,7 @@ class MainActivity : AppCompatActivity() {
 class Diff : SmartDiffCallback<Item>(
 )
 
-class BindMap4 : SmartContainer<Item>(R.layout.item_4, 4, { item_text_4.text = it.value }) {
+class BindMap4 : SmartContainer<Item>(R.layout.item_type2, 4, { tv2.text = it.value }) {
 }
 
 //class LocalFactory(val activity: AppCompatActivity) : LayoutFactory {

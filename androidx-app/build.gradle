@@ -33,11 +33,14 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    implementation 'com.ayvytr:ktx:2.5.0'
 
-    if(jcenter) {
+    if (jcenter) {
         implementation 'com.ayvytr:smart-adapter-androidx:0.1.0'
     } else {
         implementation project(":smart-adapter-androidx")
