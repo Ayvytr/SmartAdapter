@@ -1,6 +1,6 @@
 apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion 27
@@ -48,4 +48,5 @@ task dokkaJavadoc(type: org.jetbrains.dokka.gradle.DokkaAndroidTask) {
     noStdlibLink = false
 }
 
-apply from: 'https://raw.github.com/Ayvytr/KotlinJavadocMavenPush/master/kotlin_maven_push.gradle'
+//apply from: 'https://raw.github.com/Ayvytr/GlobalConfig/master/gradle/kotlin_maven_push.gradle'
+apply from: '../maven_push.gradle'

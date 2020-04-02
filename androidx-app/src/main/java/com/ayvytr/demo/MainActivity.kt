@@ -2,17 +2,17 @@ package com.ayvytr.demo
 
 import android.os.Bundle
 import android.os.Handler
-import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
-import com.ayvytr.adapter.SmartAdapter
-import com.ayvytr.adapter.SmartContainer
-import com.ayvytr.adapter.SmartDiffCallback
-import com.ayvytr.adapter.bind
+import androidx.appcompat.app.AppCompatActivity
+import androidx.ayvytr.adapter.SmartAdapter
+import androidx.ayvytr.adapter.SmartContainer
+import androidx.ayvytr.adapter.SmartDiffCallback
+import androidx.ayvytr.adapter.bind
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.item.view.*
+import kotlinx.android.synthetic.main.item.*
 import kotlinx.android.synthetic.main.item_4.view.*
-import kotlinx.android.synthetic.main.item_custom.view.*
-import kotlinx.android.synthetic.main.item_second.view.*
+import kotlinx.android.synthetic.main.item_custom.*
+import kotlinx.android.synthetic.main.item_second.*
 import kotlin.random.Random
 
 class MainActivity : AppCompatActivity() {

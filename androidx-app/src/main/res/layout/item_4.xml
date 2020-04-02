@@ -8,8 +8,7 @@
     android:layout_height="wrap_content"
     android:layout_margin="6dp"
     android:background="#f0f"
-    android:padding="8dp"
-    tools:context="androidx.ayvytr.rados.recyclerviewlibrary.MainActivity">
+    android:padding="8dp">
 
     <TextView
         android:id="@+id/item_text_4"
