@@ -1,71 +1,34 @@
 package com.ayvytr.adapter
 
+import android.content.Context
 import android.support.annotation.LayoutRes
 import android.support.v7.util.DiffUtil
-import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 
-
 /**
+ * [RecyclerView.Adapter]的继承类，可以继承重写open方法，可以使用[smart]满足大多数需求.
+ * @param context 按照目前的写法，context未用到，迭代几个小版本，如果还没有用到，可以删除
+ *
  * @author Ayvytr <a href="https://github.com/Ayvytr" target="_blank">'s GitHub</a>
  * @since 0.1.0
  */
-
-/**
- * 快速创建[SmartAdapter]的入口.
- *
- * 用法:
- * ```
- *     rv = YourRecyclerView()
- *     rv.bind(list, R.layout.your_layout){
- *          //view binding
- *     }
- *       .build()
- * ```
- *
- */
-fun <T> RecyclerView.bind(items: List<T>,
-                          @LayoutRes layoutId: Int,
-                          bind: (View.(item: T) -> Unit)): SmartAdapter<T> {
-    this.layoutManager = LinearLayoutManager(context)
-    return SmartAdapter(items.toMutableList(), this)
-        .map(layoutId, 0, bind)
-}
-
-/**
- * 快速创建[SmartAdapter]的入口.
- *
- * 用法:
- * ```
- *     rv = YourRecyclerView()
- *     rv.bind(list, itemViewType, R.layout.your_layout){
- *          //view binding
- *     }
- *       .build()
- * ```
- *
- */
-fun <T> RecyclerView.bind(items: List<T>,
-                          @LayoutRes layoutId: Int,
-                          type: Int = 0,
-                          bind: (View.(item: T) -> Unit)): SmartAdapter<T> {
-    this.layoutManager = LinearLayoutManager(context)
-    return SmartAdapter(items.toMutableList(), this)
-        .map(layoutId, type, bind)
-}
-
-/**
- * 真实Adapter类，是[bind]的返回类型，你可以继承[SmartAdapter], 但是大多数情况下，调用[bind]足够了.
- */
-open class SmartAdapter<T>(val list: MutableList<T>, val rv: RecyclerView)
-    : RecyclerView.Adapter<SmartViewHolder<T>>() {
+open class SmartAdapter<T>(val context: Context,
+                           val list: MutableList<T> = mutableListOf(),
+                           bind: SmartContainer<T>? = null
+) : RecyclerView.Adapter<SmartViewHolder<T>>() {
+    init {
+        bind?.let {
+            map(it)
+        }
+    }
     /**
      * @see [type]
      */
-    private var viewTypePredicate: (item: T) -> Int = { 0 }
+    private var viewTypePredicate: (item: T, position: Int) -> Int = { _, _ -> 0 }
+
     private val map = mutableMapOf<Int, SmartContainer<T>>()
 
     /**
@@ -83,26 +46,18 @@ open class SmartAdapter<T>(val list: MutableList<T>, val rv: RecyclerView)
      * 内部真实创建的Diff Callback.
      */
     var diffCallback: DiffUtil.Callback? = null
-        private set
+
     var detectMovies = true
 
-    private var onItemClickListener: (T, Int) -> Unit = { _, _ -> }
-    private var onItemLongClickListener: (T, Int) -> Unit = { _, _ -> }
+    var itemClickListener: (T, Int) -> Unit = { _, _ -> }
+    var itemLongClickListener: (T, Int) -> Unit = { _, _ -> }
 
     /**
-     * Function to get view type.
+     * 设置 view type 获取方法.
      * @see [viewTypePredicate]
      */
-    fun type(predicate: (item: T) -> Int): SmartAdapter<T> {
+    fun type(predicate: (item: T, position: Int) -> Int): SmartAdapter<T> {
         this.viewTypePredicate = predicate
-        return this
-    }
-
-    /**
-     * Real function to create [SmartAdapter], you must to call it last step.
-     */
-    fun build(): SmartAdapter<T> {
-        rv.adapter = this
         return this
     }
 
@@ -116,11 +71,11 @@ open class SmartAdapter<T>(val list: MutableList<T>, val rv: RecyclerView)
         map[holder.viewType]?.let {
             holder.bind(list[position])
             holder.itemView.setOnClickListener {
-                onItemClickListener(list[position], position)
+                itemClickListener(list[position], position)
             }
 
             holder.itemView.setOnLongClickListener {
-                onItemLongClickListener(list[position], position)
+                itemLongClickListener(list[position], position)
                 true
             }
         }
@@ -129,44 +84,44 @@ open class SmartAdapter<T>(val list: MutableList<T>, val rv: RecyclerView)
     override fun getItemCount() = list.size
 
     override fun getItemViewType(position: Int): Int {
-        return viewTypePredicate(list[position])
+        return viewTypePredicate(list[position], position)
     }
 
 
-    fun map(@LayoutRes layoutId: Int, type: Int, bind: View.(item: T) -> Unit): SmartAdapter<T> {
+    open fun map(@LayoutRes layoutId: Int, type: Int,
+                 bind: View.(item: T) -> Unit): SmartAdapter<T> {
         return map(SmartContainer(layoutId, type, bind))
     }
 
     /**
-     * Multiple item view type creator, if you call this explicit, you must to call [type] to describe how to get item
-     * view type.
+     * 设置[RecyclerView]多类型item view的方法.
+     * @see [smartContainer]
      */
-    fun map(smartContainer: SmartContainer<T>): SmartAdapter<T> {
+    open fun map(smartContainer: SmartContainer<T>): SmartAdapter<T> {
         map[smartContainer.viewType] = smartContainer
         return this
     }
 
     /**
-     * Sets up a layout manager for the recycler view.
+     * 设置diff callback(实际使用了[smartDiffCallback]包装了[DiffUtil.Callback]).
+     * @param smartDiffCallback `null` :取消diff，
+     * @param detectMovies `true` :尝试检测移动的item，参见[DiffUtil.calculateDiff].
      */
-    fun layoutManager(manager: RecyclerView.LayoutManager): SmartAdapter<T> {
-        rv.layoutManager = manager
-        return this
-    }
-
-
-    /**
-     * Create different callback.
-     */
-    fun diff(smartDiffCallback: SmartDiffCallback<T> = SmartDiffCallback(),
-             detectMovies: Boolean = true): SmartAdapter<T> {
+    open fun diff(smartDiffCallback: SmartDiffCallback<T>? = SmartDiffCallback(),
+                  detectMovies: Boolean = true): SmartAdapter<T> {
         this.detectMovies = detectMovies
-        createDiffCallback(smartDiffCallback)
+
+        if (smartDiffCallback == null) {
+            removeDiff()
+        } else {
+            createDiffCallback(smartDiffCallback)
+        }
+
         return this
     }
 
     /**
-     * Different remover.
+     * 移除diff callback.
      */
     fun removeDiff() {
         if (hasDiff()) {
@@ -174,9 +129,6 @@ open class SmartAdapter<T>(val list: MutableList<T>, val rv: RecyclerView)
         }
     }
 
-    /**
-     * Real different creator.
-     */
     private fun createDiffCallback(smartDiffCallback: SmartDiffCallback<T>) {
         this.diffCallback = object : DiffUtil.Callback() {
             override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
@@ -217,10 +169,7 @@ open class SmartAdapter<T>(val list: MutableList<T>, val rv: RecyclerView)
     }
 
 
-    /**
-     * Calculate difference.
-     */
-    private fun diffUpdate() {
+    protected open fun dispatchUpdate() {
         val diffResult = DiffUtil.calculateDiff(diffCallback!!, detectMovies)
         diffResult.dispatchUpdatesTo(this)
         list.clear()
@@ -228,14 +177,14 @@ open class SmartAdapter<T>(val list: MutableList<T>, val rv: RecyclerView)
     }
 
     /**
-     * Add [item] to [index] of [list], default append.
+     * 添加[item]到[list]的[index],默认是追加到末尾.
      */
     fun add(item: T, index: Int = list.size) {
         if (diffCallback != null) {
             getTempList().also {
                 it.add(index, item)
             }.also {
-                diffUpdate()
+                dispatchUpdate()
             }
         } else {
             list.add(index, item)
@@ -244,12 +193,12 @@ open class SmartAdapter<T>(val list: MutableList<T>, val rv: RecyclerView)
     }
 
     /**
-     * Set [list] to [newList].
+     * 清空[list]，添加[newList]所有item到[list].
      */
     fun update(newList: List<T>) {
         if (diffCallback != null) {
             tempNewList = newList.toMutableList()
-            diffUpdate()
+            dispatchUpdate()
         } else {
             list.clear()
             list.addAll(newList)
@@ -258,7 +207,7 @@ open class SmartAdapter<T>(val list: MutableList<T>, val rv: RecyclerView)
     }
 
     /**
-     * Remove [item] from [list].
+     * 删除[list]中的[item].
      */
     fun remove(item: T): Boolean {
         var succeed = false
@@ -266,7 +215,7 @@ open class SmartAdapter<T>(val list: MutableList<T>, val rv: RecyclerView)
             getTempList().also {
                 succeed = it.remove(item)
             }.also {
-                diffUpdate()
+                dispatchUpdate()
             }
             return succeed
         } else {
@@ -277,7 +226,7 @@ open class SmartAdapter<T>(val list: MutableList<T>, val rv: RecyclerView)
     }
 
     /**
-     * Remove item at [index], if exists.
+     * 如果存在，删除[list]中[index]所在的item.
      */
     fun removeAt(index: Int) {
         if (index < 0 || index >= list.size) {
@@ -288,7 +237,7 @@ open class SmartAdapter<T>(val list: MutableList<T>, val rv: RecyclerView)
             getTempList().also {
                 it.removeAt(index)
             }.also {
-                diffUpdate()
+                dispatchUpdate()
             }
         } else {
             list.removeAt(index)
@@ -297,14 +246,14 @@ open class SmartAdapter<T>(val list: MutableList<T>, val rv: RecyclerView)
     }
 
     /**
-     * Add [items] to [index] of [list], default append.
+     * 添加[items]到[list]的[index]位置，默认追加到末尾.
      */
     fun addAll(items: List<T>, index: Int = list.size) {
         if (diffCallback != null) {
             getTempList().also {
                 it.addAll(index, items)
             }.also {
-                diffUpdate()
+                dispatchUpdate()
             }
         } else {
             list.addAll(index, items)
@@ -313,14 +262,14 @@ open class SmartAdapter<T>(val list: MutableList<T>, val rv: RecyclerView)
     }
 
     /**
-     * Remove [items] from [list].
+     * 删除[list]中[items].
      */
     fun removeAll(items: List<T>) {
         if (diffCallback != null) {
             getTempList().also {
                 it.removeAll(items)
             }.also {
-                diffUpdate()
+                dispatchUpdate()
             }
         } else {
             list.removeAll(items)
@@ -329,7 +278,7 @@ open class SmartAdapter<T>(val list: MutableList<T>, val rv: RecyclerView)
     }
 
     /**
-     * Remove all items from [list].
+     * 清空[list]中所有元素
      */
     fun clear() {
         if (list.isEmpty()) {
@@ -339,7 +288,7 @@ open class SmartAdapter<T>(val list: MutableList<T>, val rv: RecyclerView)
         if (diffCallback != null) {
             mutableListOf<T>().also {
                 tempNewList.clear()
-                diffUpdate()
+                dispatchUpdate()
             }
         } else {
             list.clear()
@@ -348,7 +297,7 @@ open class SmartAdapter<T>(val list: MutableList<T>, val rv: RecyclerView)
     }
 
     /**
-     * Returns `true` if [list] is empty.
+     * [list]是否为空.
      */
     fun isEmpty(): Boolean {
         return list.isEmpty()
@@ -356,7 +305,7 @@ open class SmartAdapter<T>(val list: MutableList<T>, val rv: RecyclerView)
 
 
     /**
-     * Returns `true` if [SmartAdapter] has different callback.
+     * [SmartAdapter]是否设置了[diffCallback].
      */
     fun hasDiff(): Boolean {
         return diffCallback != null
@@ -364,35 +313,14 @@ open class SmartAdapter<T>(val list: MutableList<T>, val rv: RecyclerView)
 
 
     fun click(onItemClickListener: (item: T, position: Int) -> Unit): SmartAdapter<T> {
-        this.onItemClickListener = onItemClickListener
+        this.itemClickListener = onItemClickListener
         return this
     }
 
     fun longClick(onItemLongClickListener: (item: T, position: Int) -> Unit): SmartAdapter<T> {
-        this.onItemLongClickListener = onItemLongClickListener
+        this.itemLongClickListener = onItemLongClickListener
         return this
     }
 }
 
-/**
- * Container for [SmartAdapter], include [layoutId], [viewType] and [bind], bind for init view.
- */
-open class SmartContainer<T>(@LayoutRes val layoutId: Int, val viewType: Int, val bind: View.(item: T) -> Unit) {
-    override fun toString(): String {
-        return "SmartContainer(layoutId=$layoutId, viewType=$viewType, bind=$bind)"
-    }
-}
 
-
-/**
- * View holder for [SmartAdapter]
- */
-class SmartViewHolder<T>(containerView: View, val viewType: Int,
-                         private val smartContainer: SmartContainer<T>) :
-    RecyclerView.ViewHolder(containerView) {
-    fun bind(t: T, bind: View.(item: T) -> Unit = smartContainer.bind) {
-        itemView.apply {
-            bind(t)
-        }
-    }
-}

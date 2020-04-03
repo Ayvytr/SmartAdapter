@@ -1,4 +1,4 @@
-package androidx.ayvytr.adapter
+package com.ayvytr.adapter
 
 /**
  * 为外部提供的略简便的Diff Callback，从0.1.0较为繁琐的函数变量改为直接提供方法，注意：实际场景中，区分Item是不是相等是用id或者

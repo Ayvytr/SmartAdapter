@@ -1,5 +1,12 @@
-# SmartAdapter  [![](https://img.shields.io/badge/jCenter-0.2.2-red.svg)](https://bintray.com/ayvytr/maven/smart-adapter/_latestVersion)
-Kotlin Android Adapter of RecyclerView, don't need create adapter.
+# SmartAdapter 
+
+[![](https://img.shields.io/badge/jCenter-0.3.0-red.svg)](https://bintray.com/ayvytr/maven/smart-adapter/_latestVersion)
+
+
+
+为RecyclerView提供的泛型Adapter，使用Kotlin编写，充分利用了Kotlin的特性，可直接使用smart{}创建Adapter实例，使用简便，功能很赞，内部封装了DiffUtil的处理逻辑，只需设置diff callback，无需操心调用DiffUtil.calculateDiff。
+
+
 
 | 有DiffCallback，item增减有动画 | 没有DiffCallback，item增减没有动画 |
 | ------------------------------ | ---------------------------------- |
@@ -13,22 +20,87 @@ Kotlin Android Adapter of RecyclerView, don't need create adapter.
 
 Android:
 
-​	implementation "com.ayvytr:smart-adapter:{latestVersion}"
+​	implementation "com.ayvytr:smart-adapter:0.3.0"
 
 Androidx:
 
-​	implementation "com.ayvytr:smart-adapter-androidx:{latestVersion}"
+​	implementation "com.ayvytr:smart-adapter-androidx:0.3.0"
 
 
 
-## [Javadoc](https://ayvytr.github.io/projects/smartadapter/javadoc/index.html)
+
+
+## [Javadoc](https://ayvytr.github.io/projects/smartadapter/javadoc/index.html)（暂时还是旧版本的。因为还没解决dokka跨域问题）
+
+
 
 ## ChangeLog
+
+* 0.3.0
+  1. 废弃了RecyclerView.bind方法，因为只适用于RecyclerView。ViewPager2也使用了RecyclerView.Adapter
+  2. 增加smart方法创建SmartAdapter，调用简单，不再只适用RecyclerView
 
 * 0.2.2
     增加SmartDiffCallback默认实现
 
+
+
 ## 用法:
+
+### 0.3.0
+
+直接使用smart方法创建SmartAdapter或者继承SmartAdapter重写。
+
+```kotlin
+//直接使用smart方法创建adapter
+
+//单个item：
+val smartAdapter = smart(list, R.layout.item, {
+            item_text.text = it.value
+        }) {}
+
+//多个item以及更多参数：
+val smartAdapter = smart{
+    			//设置items
+            items = list
+    			//设置一个item view，包括layout id, item view type, view数据绑定方法
+            itemViewOf = SmartContainer(R.layout.item, 0) {
+                item_text.text = it.value
+            }
+    			//设置多个item view，和itemViewOf不冲突，但是要注意item view type不能重复
+            multiItemViewOf = listOf(SmartContainer(R.layout.item_type2, 1) {
+                val tv = findViewById<TextView>(R.id.tv2)
+                tv.text = it.value
+//                item_text.text = it.value
+            }, SmartContainer(R.layout.item_type3, 2) {
+                tv3.text = it.value
+//                item_text.text = it.value
+            })
+    			//获取当前item的view type
+            type = { it.type }
+    			//通过item和position,获取当前item的view type，和type二选一即可
+//            typePosition = { it, _ -> it.type }
+    			//点击事件
+            itemClick = { it, position ->
+                toast("clicked: $it $position")
+            }
+    			//长按事件
+            itemLongClick = { it, position ->
+                toast("long clicked: $it $position")
+            }
+    			//设置Diff callback，内部包装了DiffUtil.DiffCallback，设置了之后不用再操心调用DiffUtil.calculateDiff了
+            diff(SmartDiffCallback())
+}
+recycler_view.adapter = smartAdapter
+
+
+```
+
+
+
+
+
+### 0.3.0之前的用法（不建议再使用）
 
 ```kotlin
 //单个item

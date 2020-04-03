@@ -1,7 +1,9 @@
-package androidx.ayvytr.adapter
+package com.ayvytr.adapter.internal
 
 /**
- * @author EDZ
+ * 内部方法.
+ * @author Ayvytr <a href="https://github.com/Ayvytr" target="_blank">'s GitHub</a>
+ * @since 0.3.0
  */
 object Internals {
     const val NO_GETTER: String = "Property does not have a getter"
