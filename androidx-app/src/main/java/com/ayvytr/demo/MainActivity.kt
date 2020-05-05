@@ -165,8 +165,18 @@ class MainActivity : AppCompatActivity() {
         btn_reset.setOnClickListener {
             smartAdapter.update(list)
         }
+
+        btn_update_for_append.setOnClickListener {
+            val isAppendToHead = true
+            smartAdapter.update(listOf(randomItem()), true, isAppendToHead)
+            recycler_view.scrollToPosition(if(isAppendToHead) 0 else smartAdapter.itemCount)
+        }
     }
 
     private fun itemCreator() = Item("Creator", Random.nextInt(0, 3))
 
+    private fun randomItem(): Item {
+        val value = Random.nextInt()
+        return Item("Random" + value, Random.nextInt(0, 3))
+    }
 }

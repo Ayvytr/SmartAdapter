@@ -36,6 +36,8 @@ Androidx:
 
 ## ChangeLog
 
+* 0.3.1
+    SmartAdapter.update()新增参数isAppend,isAppendToHead,支持下拉刷新和加载更多共用一个方法
 * 0.3.0
   1. 废弃了RecyclerView.bind方法，因为只适用于RecyclerView。ViewPager2也使用了RecyclerView.Adapter
   2. 增加smart方法创建SmartAdapter，调用简单，不再只适用RecyclerView

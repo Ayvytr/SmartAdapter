@@ -193,16 +193,26 @@ open class SmartAdapter<T>(val context: Context,
     }
 
     /**
-     * 清空[list]，添加[newList]所有item到[list].
+     * [isAppend]=false: 更新[list]为[newList];
+     * [isAppend]=true: [isAppendToHead]=true:追加到[list]开头;[isAppendToHead]=false:追加到[list]末尾.
+     *
+     * @since 0.3.1 新增参数[isAppend],[isAppendToHead],支持下拉刷新和加载更多共用一个方法.
+     *
+     * note:设置了diffCallback之后，增减item如果没在视野里，看不到增减动画，需要手动调用
+     * [RecyclerView.scrollToPosition]。这个应该算是[RecyclerView]本身的问题.
      */
-    fun update(newList: List<T>) {
-        if (diffCallback != null) {
-            tempNewList = newList.toMutableList()
-            dispatchUpdate()
+    fun update(newList: List<T>, isAppend: Boolean = false, isAppendToHead: Boolean = false) {
+        if (isAppend) {
+            addAll(newList, if (isAppendToHead) 0 else list.size)
         } else {
-            list.clear()
-            list.addAll(newList)
-            notifyDataSetChanged()
+            if (diffCallback != null) {
+                tempNewList = newList.toMutableList()
+                dispatchUpdate()
+            } else {
+                list.clear()
+                list.addAll(newList)
+                notifyDataSetChanged()
+            }
         }
     }
 
