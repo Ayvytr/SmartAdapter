@@ -28,7 +28,8 @@ open class SmartDiffCallback<T> {
     /**
      * 必须和[getChangePayload]一起重写.
      */
-    open fun onBindPayloads(holder: SmartViewHolder<T>, item: T, payloads: List<Any>) {
-        holder.bind(item)
+    open fun onBindPayloads(holder: SmartViewHolder<T>, item: T,
+                            position: Int, payloads: List<Any>) {
+        holder.bind(item, position)
     }
 }

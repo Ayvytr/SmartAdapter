@@ -3,11 +3,11 @@ package com.ayvytr.demo
 import android.os.Bundle
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.ayvytr.adapter.SmartAdapter
 import com.ayvytr.adapter.SmartContainer
 import com.ayvytr.adapter.SmartDiffCallback
 import com.ayvytr.adapter.smart
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.ayvytr.ktx.context.toast
 import com.ayvytr.ktx.ui.getContext
 import kotlinx.android.synthetic.main.activity_main.*
@@ -30,14 +30,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initView2() {
-        smartAdapter = smart(list, R.layout.item, {
+        smartAdapter = smart(list, R.layout.item, { it, _ ->
             item_text.text = it.value
         }) {
-            multiItemViewOf = listOf(SmartContainer(R.layout.item_type2, 1) {
+            multiItemViewOf = listOf(SmartContainer(R.layout.item_type2, 1) { it, _ ->
                 val tv = findViewById<TextView>(R.id.tv2)
                 tv.text = it.value
 //                item_text.text = it.value
-            }, SmartContainer(R.layout.item_type3, 2) {
+            }, SmartContainer(R.layout.item_type3, 2) { it, _ ->
                 tv3.text = it.value
 //                item_text.text = it.value
             })
@@ -55,14 +55,14 @@ class MainActivity : AppCompatActivity() {
     private fun initView() {
         smartAdapter = smart<Item> {
             items = list
-            itemViewOf = SmartContainer(R.layout.item, 0) {
+            itemViewOf = SmartContainer(R.layout.item, 0) { it, _ ->
                 item_text.text = it.value
             }
-            multiItemViewOf = listOf(SmartContainer(R.layout.item_type2, 1) {
+            multiItemViewOf = listOf(SmartContainer(R.layout.item_type2, 1) { it, _ ->
                 val tv = findViewById<TextView>(R.id.tv2)
                 tv.text = it.value
 //                item_text.text = it.value
-            }, SmartContainer(R.layout.item_type3, 2) {
+            }, SmartContainer(R.layout.item_type3, 2) { it, _ ->
                 tv3.text = it.value
 //                item_text.text = it.value
             })

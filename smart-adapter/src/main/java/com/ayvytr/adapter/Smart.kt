@@ -14,25 +14,25 @@ import com.ayvytr.adapter.internal.SmartAdapterBuilderImpl
  */
 
 fun <T> Fragment.smart(init: SmartAdapterBuilder<T>.() -> Unit): SmartAdapter<T> =
-        SmartAdapterBuilderImpl<T>(context!!).apply { init() }.build()
+        SmartAdapterBuilderImpl<T>().apply { init() }.build()
 
 fun <T> Fragment.smart(list: List<T>,
                        @LayoutRes layoutId: Int,
-                       bind: View.(item: T) -> Unit,
+                       bind: View.(item: T, position: Int) -> Unit,
                        init: SmartAdapterBuilder<T>.() -> Unit): SmartAdapter<T> =
-        SmartAdapterBuilderImpl<T>(context!!, layoutId, bind).apply {
+        SmartAdapterBuilderImpl<T>(layoutId, bind).apply {
             items = list
             init()
         }.build()
 
 fun <T> Context.smart(init: SmartAdapterBuilder<T>.() -> Unit): SmartAdapter<T> =
-        SmartAdapterBuilderImpl<T>(this).apply { init() }.build()
+        SmartAdapterBuilderImpl<T>().apply { init() }.build()
 
 fun <T> Context.smart(list: List<T>,
                       @LayoutRes layoutId: Int,
-                      bind: View.(item: T) -> Unit,
+                      bind: View.(item: T, position: Int) -> Unit,
                       init: SmartAdapterBuilder<T>.() -> Unit): SmartAdapter<T> =
-        SmartAdapterBuilderImpl<T>(this, layoutId, bind).apply {
+        SmartAdapterBuilderImpl<T>(layoutId, bind).apply {
             items = list
             init()
         }.build()

@@ -1,6 +1,5 @@
 package com.ayvytr.adapter.internal
 
-import android.content.Context
 import android.view.View
 import androidx.annotation.LayoutRes
 import com.ayvytr.adapter.SmartAdapter
@@ -12,11 +11,10 @@ import com.ayvytr.adapter.internal.Internals.NO_GETTER
  * @author Ayvytr <a href="https://github.com/Ayvytr" target="_blank">'s GitHub</a>
  * @since 0.3.0
  */
-internal class SmartAdapterBuilderImpl<T>(private val context: Context,
-                                 @LayoutRes layoutId: Int = -1,
-                                 bind: View.(item: T) -> Unit = {}
-) : SmartAdapterBuilder<T> {
-    private val smartAdapter: SmartAdapter<T> = SmartAdapter(context)
+internal class SmartAdapterBuilderImpl<T>(@LayoutRes layoutId: Int = -1,
+                                          bind: View.(item: T, position: Int) -> Unit = { _, _ -> }
+): SmartAdapterBuilder<T> {
+    private val smartAdapter: SmartAdapter<T> = SmartAdapter()
 
     init {
         smartAdapter.map(SmartContainer(layoutId, 0, bind))

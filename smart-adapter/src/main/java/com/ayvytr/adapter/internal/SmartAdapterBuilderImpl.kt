@@ -1,22 +1,20 @@
 package com.ayvytr.adapter.internal
 
-import android.content.Context
 import android.support.annotation.LayoutRes
 import android.view.View
-import com.ayvytr.adapter.internal.Internals.NO_GETTER
 import com.ayvytr.adapter.SmartAdapter
 import com.ayvytr.adapter.SmartContainer
 import com.ayvytr.adapter.SmartDiffCallback
+import com.ayvytr.adapter.internal.Internals.NO_GETTER
 
 /**
  * @author Ayvytr <a href="https://github.com/Ayvytr" target="_blank">'s GitHub</a>
  * @since 0.3.0
  */
-internal class SmartAdapterBuilderImpl<T>(private val context: Context,
-                                          @LayoutRes layoutId: Int = -1,
-                                          bind: View.(item: T) -> Unit = {}
+internal class SmartAdapterBuilderImpl<T>(@LayoutRes layoutId: Int = -1,
+                                          bind: View.(item: T, position:Int) -> Unit = {_,_->}
 ) : SmartAdapterBuilder<T> {
-    private val smartAdapter: SmartAdapter<T> = SmartAdapter(context)
+    private val smartAdapter: SmartAdapter<T> = SmartAdapter()
 
     init {
         smartAdapter.map(SmartContainer(layoutId, 0, bind))

@@ -1,6 +1,5 @@
 package com.ayvytr.adapter
 
-import android.content.Context
 import android.support.annotation.LayoutRes
 import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
@@ -10,20 +9,19 @@ import android.view.ViewGroup
 
 /**
  * [RecyclerView.Adapter]的继承类，可以继承重写open方法，可以使用[smart]满足大多数需求.
- * @param context 按照目前的写法，context未用到，迭代几个小版本，如果还没有用到，可以删除
  *
  * @author Ayvytr <a href="https://github.com/Ayvytr" target="_blank">'s GitHub</a>
  * @since 0.1.0
  */
-open class SmartAdapter<T>(val context: Context,
-                           val list: MutableList<T> = mutableListOf(),
+open class SmartAdapter<T>(val list: MutableList<T> = mutableListOf(),
                            bind: SmartContainer<T>? = null
-) : RecyclerView.Adapter<SmartViewHolder<T>>() {
+): RecyclerView.Adapter<SmartViewHolder<T>>() {
     init {
         bind?.let {
             map(it)
         }
     }
+
     /**
      * @see [type]
      */
@@ -69,7 +67,7 @@ open class SmartAdapter<T>(val context: Context,
 
     override fun onBindViewHolder(holder: SmartViewHolder<T>, position: Int) {
         map[holder.viewType]?.let {
-            holder.bind(list[position])
+            holder.bind(list[position], position)
             holder.itemView.setOnClickListener {
                 itemClickListener(list[position], position)
             }
@@ -89,7 +87,7 @@ open class SmartAdapter<T>(val context: Context,
 
 
     open fun map(@LayoutRes layoutId: Int, type: Int,
-                 bind: View.(item: T) -> Unit): SmartAdapter<T> {
+                 bind: View.(item: T, position: Int) -> Unit): SmartAdapter<T> {
         return map(SmartContainer(layoutId, type, bind))
     }
 
@@ -157,7 +155,7 @@ open class SmartAdapter<T>(val context: Context,
         if (payloads.isEmpty()) {
             onBindViewHolder(holder, position)
         } else {
-            smartDiffCallback.onBindPayloads(holder, list[position], payloads)
+            smartDiffCallback.onBindPayloads(holder, list[position], position, payloads)
         }
     }
 

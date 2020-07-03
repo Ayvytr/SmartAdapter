@@ -12,9 +12,11 @@ import androidx.recyclerview.widget.RecyclerView
 class SmartViewHolder<T>(containerView: View, val viewType: Int,
                          private val smartContainer: SmartContainer<T>) :
     RecyclerView.ViewHolder(containerView) {
-    fun bind(t: T, bind: View.(item: T) -> Unit = smartContainer.bind) {
+    fun bind(t: T,
+             position: Int,
+             bind: View.(item: T, position: Int) -> Unit = smartContainer.bind) {
         itemView.apply {
-            bind(t)
+            bind(t, position)
         }
     }
 }

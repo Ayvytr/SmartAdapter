@@ -3,9 +3,9 @@ package com.ayvytr.adapter
 import android.content.Context
 import android.view.View
 import androidx.annotation.LayoutRes
+import androidx.fragment.app.Fragment
 import com.ayvytr.adapter.internal.SmartAdapterBuilder
 import com.ayvytr.adapter.internal.SmartAdapterBuilderImpl
-import androidx.fragment.app.Fragment
 
 /**
  * [smart]: 为[Fragment]和[Context]提供的创建[SmartAdapter]的方法.
@@ -14,25 +14,25 @@ import androidx.fragment.app.Fragment
  */
 
 fun <T> Fragment.smart(init: SmartAdapterBuilder<T>.() -> Unit): SmartAdapter<T> =
-        SmartAdapterBuilderImpl<T>(context!!).apply { init() }.build()
+        SmartAdapterBuilderImpl<T>().apply { init() }.build()
 
 fun <T> Fragment.smart(list: List<T>,
                        @LayoutRes layoutId: Int,
-                       bind: View.(item: T) -> Unit,
+                       bind: View.(item: T, position: Int) -> Unit,
                        init: SmartAdapterBuilder<T>.() -> Unit): SmartAdapter<T> =
-        SmartAdapterBuilderImpl<T>(context!!, layoutId, bind).apply {
+        SmartAdapterBuilderImpl<T>(layoutId, bind).apply {
             items = list
             init()
         }.build()
 
 fun <T> Context.smart(init: SmartAdapterBuilder<T>.() -> Unit): SmartAdapter<T> =
-        SmartAdapterBuilderImpl<T>(this).apply { init() }.build()
+        SmartAdapterBuilderImpl<T>().apply { init() }.build()
 
 fun <T> Context.smart(list: List<T>,
                       @LayoutRes layoutId: Int,
-                      bind: View.(item: T) -> Unit,
+                      bind: View.(item: T, position: Int) -> Unit,
                       init: SmartAdapterBuilder<T>.() -> Unit): SmartAdapter<T> =
-        SmartAdapterBuilderImpl<T>(this, layoutId, bind).apply {
+        SmartAdapterBuilderImpl<T>(layoutId, bind).apply {
             items = list
             init()
         }.build()
