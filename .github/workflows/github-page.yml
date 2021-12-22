@@ -30,11 +30,6 @@ jobs:
           gradle-version: 6.7.1
           arguments: dokkaHtml
 
-      - name: move javadoc
-        run: |
-          mkdir -p ./smart-adapter-androidx/build/javadoc-temp/smart-adapter
-          mv ./smart-adapter-androidx/build/javadoc/* ./smart-adapter-androidx/build/javadoc-temp/smart-adapter
-
       # 部署到 GitHub Pages
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@releases/v3
@@ -42,4 +37,5 @@ jobs:
           ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
           REPOSITORY_NAME: ayvytr/ayvytr.github.io
           BRANCH: master
-          FOLDER: ./smart-adapter-androidx/build/javadoc-temp
+          FOLDER: ./smart-adapter-androidx/build/javadoc
+          target-folder: smart-adapter
