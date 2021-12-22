@@ -32,8 +32,8 @@ jobs:
 
       - name: move javadoc
         run: |
-          mkdir ./smart-adapter-androidx/build/javadoc/smart-adapter
-          mv ./smart-adapter-androidx/build/javadoc/* ./smart-adapter-androidx/build/javadoc/smart-adapter
+          mkdir -p ./smart-adapter-androidx/build/javadoc-temp/smart-adapter
+          mv ./smart-adapter-androidx/build/javadoc/* ./smart-adapter-androidx/build/javadoc-temp/smart-adapter
 
       # 部署到 GitHub Pages
       - name: Deploy
@@ -42,4 +42,4 @@ jobs:
           ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
           REPOSITORY_NAME: ayvytr/ayvytr.github.io
           BRANCH: master
-          FOLDER: ./smart-adapter-androidx/build/javadoc
+          FOLDER: ./smart-adapter-androidx/build/javadoc-temp
