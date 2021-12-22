@@ -38,5 +38,5 @@ jobs:
           REPOSITORY_NAME: ayvytr/ayvytr.github.io
           BRANCH: master
           FOLDER: ./smart-adapter-androidx/build/javadoc
-          clean: false
-          target-folder: smart-adapter
+          CLEAN: false
+          TARGET_FOLDER: smart-adapter
