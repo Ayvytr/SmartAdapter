@@ -39,4 +39,4 @@ jobs:
           BRANCH: master
           FOLDER: ./smart-adapter-androidx/build/javadoc
           CLEAN: false
-          TARGET_FOLDER: smart-adapter
+          TARGET_FOLDER: javadocs/smart-adapter
