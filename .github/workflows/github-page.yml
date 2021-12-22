@@ -25,10 +25,7 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
 
-      # 生成静态文件
-      - name: Build
-        run: npm install && npm run build
-
+      # 生成javadoc
       - uses: gradle/gradle-build-action@v2
         with:
           gradle-version: 6.7.1
