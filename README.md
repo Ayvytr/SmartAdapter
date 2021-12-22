@@ -18,6 +18,25 @@
 
 ## Import
 
+mavenCentral（0.3.3+）
+
+```
+implementation "io.github.ayvytr:smart-adapter-androidx:0.3.3"
+```
+
+
+
+jcenter
+
+```
+Android:
+	implementation "com.ayvytr:smart-adapter:0.3.2"
+Androidx:
+	implementation "com.ayvytr:smart-adapter-androidx:0.3.2"
+```
+
+
+
 Android:
 
 ​	implementation "com.ayvytr:smart-adapter:0.3.2"
@@ -34,16 +53,19 @@ Androidx:
 
 
 
+## 说明
+
+0.3.3开始只更新androidx的库
+
 ## ChangeLog
 
+* 0.3.3 支持mavenCentral
 * 0.3.2 增加bind方法position参数，方便点击监听获取position
-
 * 0.3.1
     SmartAdapter.update()新增参数isAppend,isAppendToHead,支持下拉刷新和加载更多共用一个方法
 * 0.3.0
   1. 废弃了RecyclerView.bind方法，因为只适用于RecyclerView。ViewPager2也使用了RecyclerView.Adapter
   2. 增加smart方法创建SmartAdapter，调用简单，不再只适用RecyclerView
-
 * 0.2.2
     增加SmartDiffCallback默认实现
 
