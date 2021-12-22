@@ -7,7 +7,6 @@ on:
   pull_request:
     branches: [ master ]
 
-# 任务
 jobs:
   build-and-deploy:
     # 服务器环境：最新版 Ubuntu
@@ -30,6 +29,11 @@ jobs:
         with:
           gradle-version: 6.7.1
           arguments: dokkaHtml
+
+      - name: move javadoc
+        run: |
+          mkdir ./smart-adapter-androidx/build/javadoc/smart-adapter
+          mv ./smart-adapter-androidx/build/javadoc/* ./smart-adapter-androidx/build/javadoc/smart-adapter
 
       # 部署到 GitHub Pages
       - name: Deploy
