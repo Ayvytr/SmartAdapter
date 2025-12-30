@@ -1,6 +1,5 @@
 package com.ayvytr.demo
 
-import android.R.attr.text
 import android.os.Bundle
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -30,15 +29,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initView2() {
-        smartAdapter = smart(list, R.layout.item, {
-            findViewById<TextView>(R.id.item_text).text = it.value
+        smartAdapter = smart(list, R.layout.item, { item: Item, i: Int ->
+            findViewById<TextView>(R.id.item_text).text = item.value
         }) {
-            multiItemViewOf = listOf(SmartContainer(R.layout.item_type2, 1) {
+            multiItemViewOf =
+                listOf(SmartContainer<Item>(R.layout.item_type2, 1) { item: Item, i: Int ->
                 val tv = findViewById<TextView>(R.id.tv2)
-                tv.text = it.value
+                    tv.text = item.value
 //                item_text.text = it.value
-            }, SmartContainer(R.layout.item_type3, 2) {
-                findViewById<TextView>(R.id.tv3).text = it.value
+                }, SmartContainer<Item>(R.layout.item_type3, 2) { item: Item, i: Int ->
+                    findViewById<TextView>(R.id.tv3).text = item.value
 //                item_text.text = it.value
             })
             type = { it.type }
@@ -55,15 +55,16 @@ class MainActivity : AppCompatActivity() {
     private fun initView() {
         smartAdapter = smart<Item> {
             items = list
-            itemViewOf = SmartContainer(R.layout.item, 0) {
-                findViewById<TextView>(R.id.item_text).text = it.value
+            itemViewOf = SmartContainer(R.layout.item, 0) { item: Item, i: Int ->
+                findViewById<TextView>(R.id.item_text).text = item.value
             }
-            multiItemViewOf = listOf(SmartContainer(R.layout.item_type2, 1) {
+            multiItemViewOf =
+                listOf(SmartContainer<Item>(R.layout.item_type2, 1) { item: Item, i: Int ->
                 val tv = findViewById<TextView>(R.id.tv2)
-                tv.text = it.value
+                    tv.text = item.value
 //                item_text.text = it.value
-            }, SmartContainer(R.layout.item_type3, 2) {
-                findViewById<TextView>(R.id.tv3).text = it.value
+                }, SmartContainer<Item>(R.layout.item_type3, 2) { item: Item, i: Int ->
+                    findViewById<TextView>(R.id.tv3).text = item.value
 //                item_text.text = it.value
             })
             type = { it.type }
