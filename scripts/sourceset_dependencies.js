@@ -1,0 +1,1 @@
+sourceset_dependencies='{":smart-adapter-androidx/debug":[],":smart-adapter-androidx/main":[],":smart-adapter-androidx/release":[]}'
