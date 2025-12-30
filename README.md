@@ -1,6 +1,6 @@
 # SmartAdapter 
 
-[![](https://img.shields.io/badge/jCenter-0.3.0-red.svg)](https://bintray.com/ayvytr/maven/smart-adapter/_latestVersion)
+[![](https://img.shields.io/badge/jCenter-0.3.2-red.svg)](https://bintray.com/ayvytr/maven/smart-adapter/_latestVersion)
 
 
 
@@ -18,13 +18,32 @@
 
 ## Import
 
+mavenCentral（0.3.3+）
+
+```
+implementation "io.github.ayvytr:smart-adapter-androidx:0.3.3"
+```
+
+
+
+jcenter
+
+```
+Android:
+	implementation "com.ayvytr:smart-adapter:0.3.2"
+Androidx:
+	implementation "com.ayvytr:smart-adapter-androidx:0.3.2"
+```
+
+
+
 Android:
 
-​	implementation "com.ayvytr:smart-adapter:0.3.0"
+​	implementation "com.ayvytr:smart-adapter:0.3.2"
 
 Androidx:
 
-​	implementation "com.ayvytr:smart-adapter-androidx:0.3.0"
+​	implementation "com.ayvytr:smart-adapter-androidx:0.3.2"
 
 
 
@@ -34,14 +53,19 @@ Androidx:
 
 
 
+## 说明
+
+0.3.3开始只更新androidx的库
+
 ## ChangeLog
 
+* 0.3.3 支持mavenCentral
+* 0.3.2 增加bind方法position参数，方便点击监听获取position
 * 0.3.1
     SmartAdapter.update()新增参数isAppend,isAppendToHead,支持下拉刷新和加载更多共用一个方法
 * 0.3.0
   1. 废弃了RecyclerView.bind方法，因为只适用于RecyclerView。ViewPager2也使用了RecyclerView.Adapter
   2. 增加smart方法创建SmartAdapter，调用简单，不再只适用RecyclerView
-
 * 0.2.2
     增加SmartDiffCallback默认实现
 
@@ -49,7 +73,7 @@ Androidx:
 
 ## 用法:
 
-### 0.3.0
+### 0.3.0+
 
 直接使用smart方法创建SmartAdapter或者继承SmartAdapter重写。
 
@@ -57,7 +81,7 @@ Androidx:
 //直接使用smart方法创建adapter
 
 //单个item：
-val smartAdapter = smart(list, R.layout.item, {
+val smartAdapter = smart(list, R.layout.item, {it,_->
             item_text.text = it.value
         }) {}
 
@@ -66,15 +90,15 @@ val smartAdapter = smart{
     			//设置items
             items = list
     			//设置一个item view，包括layout id, item view type, view数据绑定方法
-            itemViewOf = SmartContainer(R.layout.item, 0) {
+            itemViewOf = SmartContainer(R.layout.item, 0) {it,_->
                 item_text.text = it.value
             }
     			//设置多个item view，和itemViewOf不冲突，但是要注意item view type不能重复
-            multiItemViewOf = listOf(SmartContainer(R.layout.item_type2, 1) {
+            multiItemViewOf = listOf(SmartContainer(R.layout.item_type2, 1) {it,_->
                 val tv = findViewById<TextView>(R.id.tv2)
                 tv.text = it.value
 //                item_text.text = it.value
-            }, SmartContainer(R.layout.item_type3, 2) {
+            }, SmartContainer(R.layout.item_type3, 2) {it,_->
                 tv3.text = it.value
 //                item_text.text = it.value
             })
